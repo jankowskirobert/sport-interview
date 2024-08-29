@@ -33,4 +33,8 @@ public class InMemoryGamesRepository implements GamesRepository {
     public List<GameSummary> resultsOrderedByRecentScore() {
         return null;
     }
+
+    public boolean hasGame(TeamName homeTeamName, TeamName awayTeamName) {
+        return (homeTeam.containsKey(homeTeamName.asString()) && awayTeam.containsKey(awayTeamName.asString()));
+    }
 }

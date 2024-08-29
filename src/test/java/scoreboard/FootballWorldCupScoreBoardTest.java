@@ -1,5 +1,6 @@
 package scoreboard;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import scoreboard.GameErrors.GameIsAlreadyInProgress;
 import scoreboard.GameErrors.TeamNamesCannotBeNull;
@@ -12,7 +13,7 @@ class FootballWorldCupScoreBoardTest {
     @Test
     public void testShouldNotStartAMatch_teamNamesAreNull() {
         //given
-        FootballWorldCupScoreBoard scoreBoard = aNewScoreBoard();
+        FootballWorldCupScoreBoard scoreBoard = new FootballWorldCupScoreBoard(new InMemoryGamesRepository());
 
         //then
         assertThrows(TeamNamesCannotBeNull.class, () -> scoreBoard.startGame(null, null));
@@ -22,7 +23,7 @@ class FootballWorldCupScoreBoardTest {
     @Test
     public void testShouldNotStartAMatch_awayTeamIsNull() {
         //given
-        FootballWorldCupScoreBoard scoreBoard = aNewScoreBoard();
+        FootballWorldCupScoreBoard scoreBoard = new FootballWorldCupScoreBoard(new InMemoryGamesRepository());
         TeamName homeTeam = TeamName.of("Mexico");
 
         //then
@@ -32,7 +33,7 @@ class FootballWorldCupScoreBoardTest {
     @Test
     public void testShouldNotStartAMatch_homeTeamIsNull() {
         //given
-        FootballWorldCupScoreBoard scoreBoard = aNewScoreBoard();
+        FootballWorldCupScoreBoard scoreBoard = new FootballWorldCupScoreBoard(new InMemoryGamesRepository());
         TeamName awayTeam = TeamName.of("Canada");
 
         //then
@@ -42,7 +43,7 @@ class FootballWorldCupScoreBoardTest {
     @Test
     public void testShouldStartAMatch_gameShouldHaveInitialScore0to0() {
         //given
-        FootballWorldCupScoreBoard scoreBoard = aNewScoreBoard();
+        FootballWorldCupScoreBoard scoreBoard = new FootballWorldCupScoreBoard(new InMemoryGamesRepository());
         TeamName homeTeam = TeamName.of("Mexico");
         TeamName awayTeam = TeamName.of("Canada");
 
@@ -58,7 +59,7 @@ class FootballWorldCupScoreBoardTest {
     @Test
     public void testShouldNotStartAMatch_thereIsAlreadyRegisteredMatchForTeams() {
         //given
-        FootballWorldCupScoreBoard scoreBoard = aNewScoreBoard();
+        FootballWorldCupScoreBoard scoreBoard = new FootballWorldCupScoreBoard(new InMemoryGamesRepository());
         TeamName homeTeam = TeamName.of("Mexico");
         TeamName awayTeamName = TeamName.of("Canada");
 
@@ -73,7 +74,7 @@ class FootballWorldCupScoreBoardTest {
     @Test
     public void testShouldNotStartAMatch_thereIsAlreadyRegisteredMatchForHomeTeam() {
         //given
-        FootballWorldCupScoreBoard scoreBoard = aNewScoreBoard();
+        FootballWorldCupScoreBoard scoreBoard = new FootballWorldCupScoreBoard(new InMemoryGamesRepository());
         TeamName homeTeam = TeamName.of("Mexico");
         TeamName awayTeamName = TeamName.of("Canada");
         TeamName anotherHomeTeamName = TeamName.of("Poland");
@@ -90,7 +91,7 @@ class FootballWorldCupScoreBoardTest {
     @Test
     public void testShouldNotStartAMatch_thereIsAlreadyRegisteredMatchForAwayTeam() {
         //given
-        FootballWorldCupScoreBoard scoreBoard = aNewScoreBoard();
+        FootballWorldCupScoreBoard scoreBoard = new FootballWorldCupScoreBoard(new InMemoryGamesRepository());
         TeamName homeTeam = TeamName.of("Mexico");
         TeamName awayTeamName = TeamName.of("Canada");
         TeamName anotherAwayTeamName = TeamName.of("Poland");
@@ -105,11 +106,18 @@ class FootballWorldCupScoreBoardTest {
 
     @Test
     public void testShouldFinishGameInProgress() {
+        //given
+        InMemoryGamesRepository gamesRepository = new InMemoryGamesRepository();
+        FootballWorldCupScoreBoard scoreBoard = new FootballWorldCupScoreBoard(gamesRepository);
+        TeamName homeTeam = TeamName.of("Mexico");
+        TeamName awayTeam = TeamName.of("Canada");
+        scoreBoard.startGame(homeTeam, awayTeam);
 
-    }
+        //when
+        scoreBoard.finishGame(homeTeam, awayTeam);
 
-    private FootballWorldCupScoreBoard aNewScoreBoard() {
-        return new FootballWorldCupScoreBoard(new InMemoryGamesRepository());
+        //then
+        assertFalse(gamesRepository.hasGame(homeTeam, awayTeam));
     }
 
 }
