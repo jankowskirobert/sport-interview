@@ -1,13 +1,13 @@
 package scoreboard;
 
-public class TeamName {
+class TeamName {
     private final String teamName;
 
-    public TeamName(String teamName) {
+    private TeamName(String teamName) {
         this.teamName = teamName;
     }
 
-    public static TeamName of(String teamName) {
+    static TeamName of(String teamName) {
         if (teamName != null && !teamName.isBlank()) {
             return new TeamName(teamName);
         } else {
@@ -15,7 +15,7 @@ public class TeamName {
         }
     }
 
-    public String asString() {
+    String asString() {
         return teamName;
     }
 }
