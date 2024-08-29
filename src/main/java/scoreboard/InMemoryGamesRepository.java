@@ -2,6 +2,7 @@ package scoreboard;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class InMemoryGamesRepository implements GamesRepository {
@@ -29,6 +30,15 @@ public class InMemoryGamesRepository implements GamesRepository {
         return false;
     }
 
+    public boolean updateGame(Game game) {
+        if (homeTeam.containsKey(game.homeTeamName().asString()) && awayTeam.containsKey(game.awayTeamName().asString())) {
+            homeTeam.put(game.homeTeamName().asString(), game);
+            awayTeam.put(game.awayTeamName().asString(), game);
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public List<GameSummary> resultsOrderedByRecentScore() {
         return null;
@@ -36,5 +46,12 @@ public class InMemoryGamesRepository implements GamesRepository {
 
     public boolean hasGame(TeamName homeTeamName, TeamName awayTeamName) {
         return (homeTeam.containsKey(homeTeamName.asString()) && awayTeam.containsKey(awayTeamName.asString()));
+    }
+
+    public Optional<Game> getGame(TeamName homeTeamName, TeamName awayTeamName) {
+        if (homeTeam.containsKey(homeTeamName.asString()) && awayTeam.containsKey(awayTeamName.asString())) {
+            return Optional.ofNullable(homeTeam.get(homeTeamName.asString()));
+        }
+        return Optional.empty();
     }
 }

@@ -120,4 +120,22 @@ class FootballWorldCupScoreBoardTest {
         assertFalse(gamesRepository.hasGame(homeTeam, awayTeam));
     }
 
+    @Test
+    public void testShouldUpdateGameScore() {
+        //given
+        InMemoryGamesRepository gamesRepository = new InMemoryGamesRepository();
+        FootballWorldCupScoreBoard scoreBoard = new FootballWorldCupScoreBoard(gamesRepository);
+        TeamName homeTeam = TeamName.of("Mexico");
+        TeamName awayTeam = TeamName.of("Canada");
+        scoreBoard.startGame(homeTeam, awayTeam);
+        Score newScoreForHomeTeam = Score.forTeam(homeTeam).currentScore(1);
+        Score newScoreForAwayTeam = Score.forTeam(awayTeam).currentScore(2);
+
+        //when
+        scoreBoard.updateScore(newScoreForHomeTeam, newScoreForAwayTeam);
+
+        //then
+        assertFalse(gamesRepository.hasGame(homeTeam, awayTeam));
+    }
+
 }
