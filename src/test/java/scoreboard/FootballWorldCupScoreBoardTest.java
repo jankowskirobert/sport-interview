@@ -142,15 +142,9 @@ class FootballWorldCupScoreBoardTest {
         assertEquals(GameScore.is(1, 2), game.get().gameScore());
     }
 
-    /*
-        a. Mexico - Canada: 0 – 5
-        b. Spain - Brazil: 10 – 2
-        c. Germany - France: 2 – 2
-        d. Uruguay - Italy: 6 – 6
-        e. Argentina - Australia: 3 - 1
-     */
+
     @Test
-    public void testShouldGetGameScoreInCorrectOrder() {
+    public void testShouldGetGameScoreInCorrectOrder__recently_updated_with_highest_score_first() {
         //given
         InMemoryGamesRepository gamesRepository = new InMemoryGamesRepository();
         FootballWorldCupScoreBoard scoreBoard = new FootballWorldCupScoreBoard(gamesRepository);
@@ -194,10 +188,10 @@ class FootballWorldCupScoreBoardTest {
         List<GameSummary> summary = scoreBoard.getSummary();
         assertEquals(5, summary.size());
         assertEquals(GameSummary.of(uruguayTeamScore, italyTeamScore), summary.get(0));
-        assertEquals(GameSummary.of(spainTeamScore, brazilTeamScore), summary.get(0));
-        assertEquals(GameSummary.of(mexicoTeamScore, canadaTeamScore), summary.get(0));
-        assertEquals(GameSummary.of(argentinaTeamScore, australiaTeamScore), summary.get(0));
-        assertEquals(GameSummary.of(germanTeamScore, franceTeamScore), summary.get(0));
+        assertEquals(GameSummary.of(spainTeamScore, brazilTeamScore), summary.get(1));
+        assertEquals(GameSummary.of(mexicoTeamScore, canadaTeamScore), summary.get(2));
+        assertEquals(GameSummary.of(argentinaTeamScore, australiaTeamScore), summary.get(3));
+        assertEquals(GameSummary.of(germanTeamScore, franceTeamScore), summary.get(4));
     }
 
 }

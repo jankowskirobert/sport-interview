@@ -15,5 +15,9 @@ class TeamNameTest {
     public void testThatTeamNameCannotBeBlank() {
         assertThrows(TeamNameIllegalNameException.class, () -> TeamName.of(""));
     }
+    @Test
+    public void twoSameTeamNamesShouldBeEqual() {
+        assertEquals(TeamName.of("Poland"), TeamName.of("Poland"));
+    }
 
 }

@@ -1,9 +1,11 @@
 package scoreboard;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class InMemoryGamesRepository implements GamesRepository {
 
@@ -41,7 +43,11 @@ public class InMemoryGamesRepository implements GamesRepository {
 
     @Override
     public List<GameSummary> resultsOrderedByRecentScore() {
-        return null;
+        return homeTeam.values().stream()
+                .sorted(Comparator.comparing(Game::getLastUpdate).reversed()
+                        .thenComparing(Game::getScoreSum).reversed())
+                .map(Game::toSummary)
+                .collect(Collectors.toList());
     }
 
     public boolean hasGame(TeamName homeTeamName, TeamName awayTeamName) {

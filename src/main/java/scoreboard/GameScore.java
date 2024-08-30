@@ -6,12 +6,12 @@ public class GameScore {
     private final int homeTeamScore;
     private final int awayTeamScore;
 
-    public GameScore(int homeTeamScore, int awayTeamScore) {
+    private GameScore(int homeTeamScore, int awayTeamScore) {
         this.homeTeamScore = homeTeamScore;
         this.awayTeamScore = awayTeamScore;
     }
 
-    public static GameScore is(int homeTeamScore, int awayTeamScore) {
+    static GameScore is(int homeTeamScore, int awayTeamScore) {
         return new GameScore(homeTeamScore, awayTeamScore);
     }
 
