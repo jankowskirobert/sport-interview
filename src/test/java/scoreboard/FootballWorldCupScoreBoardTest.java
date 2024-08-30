@@ -1,9 +1,11 @@
 package scoreboard;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import scoreboard.GameErrors.GameIsAlreadyInProgress;
-import scoreboard.GameErrors.TeamNamesCannotBeNull;
+import scoreboard.GameErrors.CannotBeNull;
+
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,7 +18,7 @@ class FootballWorldCupScoreBoardTest {
         FootballWorldCupScoreBoard scoreBoard = new FootballWorldCupScoreBoard(new InMemoryGamesRepository());
 
         //then
-        assertThrows(TeamNamesCannotBeNull.class, () -> scoreBoard.startGame(null, null));
+        assertThrows(CannotBeNull.class, () -> scoreBoard.startGame(null, null));
     }
 
 
@@ -27,7 +29,7 @@ class FootballWorldCupScoreBoardTest {
         TeamName homeTeam = TeamName.of("Mexico");
 
         //then
-        assertThrows(TeamNamesCannotBeNull.class, () -> scoreBoard.startGame(homeTeam, null));
+        assertThrows(CannotBeNull.class, () -> scoreBoard.startGame(homeTeam, null));
     }
 
     @Test
@@ -37,7 +39,7 @@ class FootballWorldCupScoreBoardTest {
         TeamName awayTeam = TeamName.of("Canada");
 
         //then
-        assertThrows(TeamNamesCannotBeNull.class, () -> scoreBoard.startGame(null, awayTeam));
+        assertThrows(CannotBeNull.class, () -> scoreBoard.startGame(null, awayTeam));
     }
 
     @Test
@@ -135,7 +137,67 @@ class FootballWorldCupScoreBoardTest {
         scoreBoard.updateScore(newScoreForHomeTeam, newScoreForAwayTeam);
 
         //then
-        assertFalse(gamesRepository.hasGame(homeTeam, awayTeam));
+        Optional<Game> game = gamesRepository.getGame(homeTeam, awayTeam);
+        assertTrue(game.isPresent());
+        assertEquals(GameScore.is(1, 2), game.get().gameScore());
+    }
+
+    /*
+        a. Mexico - Canada: 0 – 5
+        b. Spain - Brazil: 10 – 2
+        c. Germany - France: 2 – 2
+        d. Uruguay - Italy: 6 – 6
+        e. Argentina - Australia: 3 - 1
+     */
+    @Test
+    public void testShouldGetGameScoreInCorrectOrder() {
+        //given
+        InMemoryGamesRepository gamesRepository = new InMemoryGamesRepository();
+        FootballWorldCupScoreBoard scoreBoard = new FootballWorldCupScoreBoard(gamesRepository);
+
+        TeamName mexicoTeam = TeamName.of("Mexico");
+        TeamName canadaTeam = TeamName.of("Canada");
+        scoreBoard.startGame(mexicoTeam, canadaTeam);
+        Score mexicoTeamScore = Score.forTeam(mexicoTeam).currentScore(0);
+        Score canadaTeamScore = Score.forTeam(canadaTeam).currentScore(5);
+        scoreBoard.updateScore(mexicoTeamScore, canadaTeamScore);
+
+        TeamName spainTeam = TeamName.of("Spain");
+        TeamName brazilTeam = TeamName.of("Brazil");
+        scoreBoard.startGame(spainTeam, brazilTeam);
+        Score spainTeamScore = Score.forTeam(spainTeam).currentScore(10);
+        Score brazilTeamScore = Score.forTeam(brazilTeam).currentScore(2);
+        scoreBoard.updateScore(spainTeamScore, brazilTeamScore);
+
+        TeamName germanTeam = TeamName.of("Germany");
+        TeamName franceTeam = TeamName.of("France");
+        scoreBoard.startGame(germanTeam, franceTeam);
+        Score germanTeamScore = Score.forTeam(germanTeam).currentScore(2);
+        Score franceTeamScore = Score.forTeam(franceTeam).currentScore(2);
+        scoreBoard.updateScore(germanTeamScore, franceTeamScore);
+
+        TeamName uruguayTeam = TeamName.of("Uruguay");
+        TeamName italyTeam = TeamName.of("Italy");
+        scoreBoard.startGame(uruguayTeam, italyTeam);
+        Score uruguayTeamScore = Score.forTeam(uruguayTeam).currentScore(6);
+        Score italyTeamScore = Score.forTeam(italyTeam).currentScore(6);
+        scoreBoard.updateScore(uruguayTeamScore, italyTeamScore);
+
+        TeamName argentinaTeam = TeamName.of("Argentina");
+        TeamName australiaTeam = TeamName.of("Australia");
+        scoreBoard.startGame(argentinaTeam, australiaTeam);
+        Score argentinaTeamScore = Score.forTeam(argentinaTeam).currentScore(3);
+        Score australiaTeamScore = Score.forTeam(australiaTeam).currentScore(1);
+        scoreBoard.updateScore(argentinaTeamScore, australiaTeamScore);
+
+        //then
+        List<GameSummary> summary = scoreBoard.getSummary();
+        assertEquals(5, summary.size());
+        assertEquals(GameSummary.of(uruguayTeamScore, italyTeamScore), summary.get(0));
+        assertEquals(GameSummary.of(spainTeamScore, brazilTeamScore), summary.get(0));
+        assertEquals(GameSummary.of(mexicoTeamScore, canadaTeamScore), summary.get(0));
+        assertEquals(GameSummary.of(argentinaTeamScore, australiaTeamScore), summary.get(0));
+        assertEquals(GameSummary.of(germanTeamScore, franceTeamScore), summary.get(0));
     }
 
 }

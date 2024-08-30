@@ -1,6 +1,5 @@
 package scoreboard;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class FootballWorldCupScoreBoard {
@@ -25,18 +24,28 @@ public class FootballWorldCupScoreBoard {
     }
 
     public void finishGame(TeamName homeTeam, TeamName awayTeam) {
+        if (homeTeam == null || awayTeam == null) {
+            throw GameErrors.NULLS_NOT_ALLOWED;
+        }
         boolean finish = gamesRepository.finish(homeTeam, awayTeam);
-        if(!finish) {
+        if (!finish) {
             throw GameErrors.MATCH_NOT_FOUND;
         }
     }
 
 
-    public void updateScore(Score homeTeam, Score awayTeam) {
-
+    public void updateScore(Score homeTeamScore, Score awayTeamScore) {
+        if (homeTeamScore == null || awayTeamScore == null) {
+            throw GameErrors.NULLS_NOT_ALLOWED;
+        }
+        Game game = gamesRepository.getGame(homeTeamScore.getTeamName(), awayTeamScore.getTeamName()).orElseThrow(
+                () -> GameErrors.MATCH_NOT_FOUND
+        );
+        game.newScore(homeTeamScore.getValue(), awayTeamScore.getValue());
+        gamesRepository.updateGame(game);
     }
 
     public List<GameSummary> getSummary() {
-        return new ArrayList<>();
+        return gamesRepository.resultsOrderedByRecentScore();
     }
 }

@@ -3,8 +3,8 @@ package scoreboard;
 public class Game {
     private final TeamName homeTeam;
     private final TeamName awayTeam;
-    private final int homeTeamScore;
-    private final int awayTeamScore;
+    private int homeTeamScore;
+    private int awayTeamScore;
 
     private Game(TeamName homeTeam, TeamName awayTeam) {
         this.homeTeam = homeTeam;
@@ -27,5 +27,14 @@ public class Game {
 
     GameScore gameScore() {
         return GameScore.is(homeTeamScore, awayTeamScore);
+    }
+
+    public void newScore(int homeTeamScore, int awayTeamScore) {
+        if (homeTeamScore < 0 || awayTeamScore < 0) {
+            throw new IllegalScoreException();
+        } else {
+            this.homeTeamScore = homeTeamScore;
+            this.awayTeamScore = awayTeamScore;
+        }
     }
 }

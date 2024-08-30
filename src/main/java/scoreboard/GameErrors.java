@@ -2,7 +2,7 @@ package scoreboard;
 
 class GameErrors {
     static final GameIsAlreadyInProgress ALREADY_IN_MATCH = new GameIsAlreadyInProgress("Could not register match because it is already registered or team is already playing");
-    static final TeamNamesCannotBeNull NULLS_NOT_ALLOWED = new TeamNamesCannotBeNull("Nulls as a team names are not allowed");
+    static final CannotBeNull NULLS_NOT_ALLOWED = new CannotBeNull("Nulls are not allowed");
     static final CouldNotFinishMatch MATCH_NOT_FOUND = new CouldNotFinishMatch("Could not finish match, team/s not found");
 
 
@@ -13,9 +13,9 @@ class GameErrors {
         }
     }
 
-    static class TeamNamesCannotBeNull extends RuntimeException {
+    static class CannotBeNull extends RuntimeException {
 
-        private TeamNamesCannotBeNull(String errorMessage) {
+        private CannotBeNull(String errorMessage) {
             super(errorMessage);
         }
     }

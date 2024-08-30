@@ -15,6 +15,14 @@ public class Score {
         return new ScoreBuilder(teamName);
     }
 
+    public TeamName getTeamName() {
+        return teamName;
+    }
+
+    public int getValue() {
+        return score;
+    }
+
 
     static class ScoreBuilder {
         TeamName teamName;
